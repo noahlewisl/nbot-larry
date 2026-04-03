@@ -21,9 +21,9 @@ const CONFIG = {
   host: '192.168.0.11',
   port: 25565,
   
-  // Ollama settings
+  // Ollama settings - use smaller/faster model
   ollamaUrl: 'http://localhost:11434/api/generate',
-  ollamaModel: 'llama3.2:latest',
+  ollamaModel: 'llama3.2:1b',  // Much faster than full 3.2
   
   // Behavior settings
   followDistance: 2,
@@ -503,7 +503,7 @@ Respond as an AI assistant would - helpful, direct, and aware of your capabiliti
         num_predict: 200
       }
     }, {
-      timeout: 30000
+      timeout: 10000  // 10 seconds instead of 30
     });
     
     return response.data.response.trim();
