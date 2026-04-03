@@ -590,18 +590,33 @@ bot.on('chat', async (username, message) => {
   
   // Check if message is directed at the bot
   const lowerMsg = message.toLowerCase();
-  const isAddressed = lowerMsg.includes(CONFIG.botName.toLowerCase()) ||
+  const botNameLower = CONFIG.botName.toLowerCase();
+  const shortName = botNameLower.replace('nbot-', ''); // Extract "larry" from "nbot-larry"
+  
+  const isAddressed = lowerMsg.includes(botNameLower) ||
+                      lowerMsg.includes(shortName) ||
                       lowerMsg.includes('bot') ||
                       lowerMsg.includes('alex') ||
                       message.startsWith('!');
   
-  if (!isAddressed && !lowerMsg.includes('hey') && !lowerMsg.includes('hi')) return;
+  console.log(`[DEBUG] Message from ${username}: "${message}" | isAddressed: ${isAddressed} | keywords: ${botNameLower}, ${shortName}, bot, alex`);
+  
+  if (!isAddressed && !lowerMsg.includes('hey') && !lowerMsg.includes('hi')) {
+    console.log(`[DEBUG] Ignoring message - not addressed to bot`);
+    return;
+  }
   
   console.log(`[${username}]: ${message}`);
   
   // Process the command
-  const response = await processCommand(bot, username, message);
-  bot.chat(response);
+  try {
+    const response = await processCommand(bot, username, message);
+    console.log(`[DEBUG] Responding: "${response}"`);
+    bot.chat(response);
+  } catch (err) {
+    console.error(`[ERROR] Failed to process: ${err.message}`);
+    bot.chat("I'm having trouble processing that...");
+  }
 });
 
 bot.on('whisper', async (username, message) => {
